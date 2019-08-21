@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export UPDATE_GOOGLE_DNS_LOGS="/var/log/updateGoogleDNS"
+PATH_INSTALL_SCRIPT_PYTHON="/opt/updateGoogleDNS"
 
+export UPDATE_GOOGLE_DNS_LOGS="/var/log/updateGoogleDNS"
 export UPDATE_GOOGLE_DNS_JSON=
 export UPDATE_GOOGLE_DNS_PROJECT_ID=
 export UPDATE_GOOGLE_DNS_ZONE_NAME=
@@ -9,8 +10,6 @@ export UPDATE_GOOGLE_DNS_ZONE_NAME=
 ### Check for dir, if not found create it using the mkdir ##
 { # try
     [ ! -d "$UPDATE_GOOGLE_DNS_LOGS" ] && mkdir -p "${UPDATE_GOOGLE_DNS_LOGS}"
-} || { # catch
-    export UPDATE_GOOGLE_DNS_LOGS="/tmp"
-}
+} 
 
-/usr/bin/python3 /opt/updateGoogleDNS/updateGoogleDNS.py
+/usr/bin/python3 ${PATH_INSTALL_SCRIPT_PYTHON}/updateGoogleDNS.py
