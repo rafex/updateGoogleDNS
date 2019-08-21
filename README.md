@@ -20,6 +20,8 @@ Habrá que agregar una línea al "crontab", se sugiere que sea cada 5 minutos pe
 ```Shell
 */5 * * * *     <USER>   /opt/updateGoogleDNS/updateGoogleDNS
 ```
+Puedes leerme en: [https://theworldofrafex.blog/](https://theworldofrafex.blog/)
+
 ---
 
 Update the Google DNS IP so it is always updated on a dynamic GNU/Linux IP server.
@@ -44,3 +46,5 @@ It will be necessary to add a line to the "crontab", it is suggested that it be 
 ```Shell
 */5 * * * *     <USER>   /opt/updateGoogleDNS/updateGoogleDNS
 ```
+
+You can read me at: [https://theworldofrafex.blog/](https://theworldofrafex.blog/)
