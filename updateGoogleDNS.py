@@ -80,6 +80,9 @@ try:
             file.write(ip_file)
             file.close()
             replace_ip = True
+            logging.info('update ip')
+        else:
+            logging.info('not update ip')
     else:
         file = open(PATH_INSTALL+"/my_ip.txt","w") 
         file.write(my_ip) 
