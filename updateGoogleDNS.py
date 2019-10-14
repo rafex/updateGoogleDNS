@@ -75,7 +75,8 @@ try:
     if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
         file = open(PATH_INSTALL+"/my_ip.txt", "r+")
         ip_file = file.read()
-        if(ip_file != my_ip):
+        logging.info('my_ip.txt: ' + ip_file.strip())
+        if(ip_file.strip() != my_ip.strip()):
             ip_file = re.sub(ip_file, my_ip, ip_file)
             file.seek(0)
             file.write(ip_file)
