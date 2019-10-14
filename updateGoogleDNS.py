@@ -53,7 +53,7 @@ try:
     PATH_OAUTH2_JSON=os.environ["UPDATE_GOOGLE_DNS_JSON"]
     ZONE_NAME=os.environ["UPDATE_GOOGLE_DNS_ZONE_NAME"]
 except KeyError:
-    logging.info('there are no environment variables')
+    logging.warn('there are no environment variables')
     exit()
     
 
@@ -67,12 +67,13 @@ logging.info("My IP: " + my_ip)
 try:
     PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON_GOOGLE_DNS"]
 except Exception:
-    logging.info('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
+    logging.warn('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
     
 try:
     os.path.isfile(PATH_INSTALL+"/my_ip.txt") 
+    logging.info('valid file my_ip.txt')
 except Exception:
-    logging.info('not found file my_ip.txt')
+    logging.warn('not found file my_ip.txt')
     file = open(PATH_INSTALL+"/my_ip.txt","w") 
     file.write(my_ip) 
     file.close()
