@@ -68,10 +68,16 @@ try:
     PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON_GOOGLE_DNS"]
 except Exception:
     logging.info('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
+    
+try:
+    os.path.isfile(PATH_INSTALL+"/my_ip.txt") 
+except Exception:
+    logging.info('not found file my_ip.txt')
+    file = open(PATH_INSTALL+"/my_ip.txt","w") 
+    file.write(my_ip) 
+    file.close()
 
-file = open(PATH_INSTALL+"/my_ip.txt","w") 
-file.write(my_ip) 
-file.close() 
+ 
 
 credentials = service_account.Credentials.from_service_account_file(
     PATH_OAUTH2_JSON)
