@@ -109,3 +109,12 @@ venv.bak/
 .pydevproject
 
 .DS_Store
+
+*.json
+
+
+## ya para productivo
+updateGoogleDNS
+
+my_ip.txt
+

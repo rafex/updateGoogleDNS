@@ -23,10 +23,10 @@ import time
 import os
 import logging
 import requests
+import re
 
 from google.oauth2 import service_account
 from google.cloud import dns
-from bs4 import BeautifulSoup
 from sys import exit
 
 try:
@@ -54,62 +54,91 @@ try:
     PATH_OAUTH2_JSON=os.environ["UPDATE_GOOGLE_DNS_JSON"]
     ZONE_NAME=os.environ["UPDATE_GOOGLE_DNS_ZONE_NAME"]
 except KeyError:
-    logging.info('there are no environment variables')
+    logging.warn('there are no environment variables')
     exit()
     
 
 
-page_link ='https://www.cual-es-mi-ip.net/'
+page_link ='https://domains.google.com/checkip'
 page_response = requests.get(page_link, timeout=5)
-page = requests.get("https://www.cual-es-mi-ip.net/").text
-page_content = BeautifulSoup(page_response.content, "html.parser")
-tag = page_content.find_all('span', attrs={'class':'big-text font-arial'})
-my_ip = tag[0].get_text()
+my_ip = page_response.text
 
 logging.info("My IP: " + my_ip)
 
-credentials = service_account.Credentials.from_service_account_file(
-    PATH_OAUTH2_JSON)
+try:
+    PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON_GOOGLE_DNS"]
+except Exception:
+    logging.warn('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
+    
+replace_ip = True
+try:
+    if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
+        file = open(PATH_INSTALL+"/my_ip.txt", "r+")
+        ip_file = file.read()
+        logging.info('my_ip.txt: ' + ip_file.strip())
+        if(ip_file.strip() != my_ip.strip()):
+            ip_file = re.sub(ip_file.strip(), my_ip.strip(), ip_file)
+            file.seek(0)
+            file.write(ip_file)
+            file.close()
+            logging.info('update ip')
+        else:
+            replace_ip = False
+            logging.info('not update ip')
+    else:
+        logging.info('create file my_ip.txt')
+        file = open(PATH_INSTALL+"/my_ip.txt","w") 
+        file.write(my_ip) 
+        file.close()  
+    
+except Exception as ex:
+    logging.warning(ex)
+    logging.warning('not found file my_ip.txt')
+    exit()
 
-scoped_credentials = credentials.with_scopes(
-    ['https://www.googleapis.com/auth/ndev.clouddns.readwrite'])
-
-client_dns = dns.Client(
-    project=PROJECT_ID,
-    credentials=scoped_credentials)
-
-zones = client_dns.list_zones()
-
-for zone in zones:
-    if ZONE_NAME == zone.name:
-        records = zone.list_resource_record_sets()
-        for record in records:
-            if 'A' == record.record_type:
-                logging.info('name: ' + record.name)
-                logging.info('type: ' + record.record_type)
-                logging.info('ttl: ' + str(record.ttl))
-                logging.info('data: ' + str(record.rrdatas))
-                if record.rrdatas[0] == my_ip:
-                    logging.info('same ip')
-                else:
-                    logging.info('different ip')
-                    changes = zone.changes()
-                    changes.delete_record_set(record)
-                    changes.create()
-                    while changes.status != 'done':
-                        logging.info('Waiting for changes to complete')
-                        time.sleep(30)
-                        changes.reload()
-                    record_set = zone.resource_record_set('rafex.dev.', 'A', 300, [my_ip,])
-                    changes = zone.changes()
-                    changes.add_record_set(record_set)
-                    changes.create()  # API request
-                    while changes.status != 'done':
-                        logging.info('Waiting for changes to complete')
-                        time.sleep(30)
-                        changes.reload()
-
-            break
-    break
+if (replace_ip):
+    credentials = service_account.Credentials.from_service_account_file(
+        PATH_OAUTH2_JSON)
+    
+    scoped_credentials = credentials.with_scopes(
+        ['https://www.googleapis.com/auth/ndev.clouddns.readwrite'])
+    
+    client_dns = dns.Client(
+        project=PROJECT_ID,
+        credentials=scoped_credentials)
+    
+    zones = client_dns.list_zones()
+    
+    for zone in zones:
+        if ZONE_NAME == zone.name:
+            records = zone.list_resource_record_sets()
+            for record in records:
+                if 'A' == record.record_type:
+                    logging.info('name: ' + record.name)
+                    logging.info('type: ' + record.record_type)
+                    logging.info('ttl: ' + str(record.ttl))
+                    logging.info('data: ' + str(record.rrdatas))
+                    if record.rrdatas[0] == my_ip:
+                        logging.info('same ip')
+                    else:
+                        logging.info('different ip')
+                        changes = zone.changes()
+                        changes.delete_record_set(record)
+                        changes.create()
+                        while changes.status != 'done':
+                            logging.info('Waiting for changes to complete')
+                            time.sleep(30)
+                            changes.reload()
+                        record_set = zone.resource_record_set('rafex.dev.', 'A', 300, [my_ip,])
+                        changes = zone.changes()
+                        changes.add_record_set(record_set)
+                        changes.create()  # API request
+                        while changes.status != 'done':
+                            logging.info('Waiting for changes to complete')
+                            time.sleep(30)
+                            changes.reload()
+    
+                break
+        break
 
 logging.info('Finished')
