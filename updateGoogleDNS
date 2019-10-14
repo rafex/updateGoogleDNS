@@ -12,5 +12,4 @@ export UPDATE_GOOGLE_DNS_ZONE_NAME=
     [ ! -d "$UPDATE_GOOGLE_DNS_LOGS" ] && mkdir -p "${UPDATE_GOOGLE_DNS_LOGS}"
 } 
 
-#/usr/bin/python3 ${PATH_INSTALL_SCRIPT_PYTHON}/updateGoogleDNS.py
-/usr/local/bin/python3 ${PATH_INSTALL_SCRIPT_PYTHON}/updateGoogleDNS.py
+/usr/bin/python3 ${PATH_INSTALL_SCRIPT_PYTHON}/updateGoogleDNS.py
