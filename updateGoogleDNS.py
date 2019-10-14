@@ -65,7 +65,7 @@ my_ip = page_response.text
 logging.info("My IP: " + my_ip)
 
 try:
-    PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON"]
+    PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON_GOOGLE_DNS"]
 except Exception:
     logging.info('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
 
