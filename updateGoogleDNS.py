@@ -70,11 +70,20 @@ try:
 except Exception:
     logging.warn('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
     
-replace_ip = False
+replace_ip = True
 try:
     if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
         file = open(PATH_INSTALL+"/my_ip.txt", "r+")
         ip_file = file.read()
+        if(ip_file != my_ip):
+            ip_file = re.sub(ip_file, my_ip, ip_file)
+            file.seek(0)
+            file.write(ip_file)
+            file.close()
+            logging.info('update ip')
+        else:
+            replace_ip = False
+            logging.info('not update ip')
     else:
         file = open(PATH_INSTALL+"/my_ip.txt","w") 
         file.write(my_ip) 
@@ -83,21 +92,6 @@ try:
 except Exception as ex:
     logging.warning(ex)
     logging.warning('not found file my_ip.txt')
-    exit()
-    
-try:
-    if(ip_file != my_ip):
-        ip_file = re.sub(ip_file, my_ip, ip_file)
-        file.seek(0)
-        file.write(ip_file)
-        file.close()
-        replace_ip = True
-        logging.info('update ip')
-    else:
-        logging.info('not update ip')
-except Exception as ex:
-    logging.warning(ex)
-    logging.warning('fail overwrite my_ip.txt')
     exit()
 
 if (replace_ip):
