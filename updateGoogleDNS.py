@@ -88,7 +88,8 @@ try:
         file.write(my_ip) 
         file.close()  
     
-except Exception:
+except Exception as e:
+    logging.warning('Exception: ' + e)
     logging.warning('not found file my_ip.txt')
     exit()
 
