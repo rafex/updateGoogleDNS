@@ -70,7 +70,7 @@ except Exception:
     logging.warn('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
     
 try:
-    if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") != True):
+    if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
         file = open(PATH_INSTALL+"/my_ip.txt", "r")
         print(file.read())
     else:
@@ -79,7 +79,7 @@ try:
         file.close()  
     
 except Exception:
-    logging.warn('not found file my_ip.txt')
+    logging.warning('not found file my_ip.txt')
     exit()
 
  
