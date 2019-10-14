@@ -59,11 +59,11 @@ except KeyError:
     
 
 
-page_link ='https://www.cual-es-mi-ip.net/'
+page_link ='https://domains.google.com/checkip'
 page_response = requests.get(page_link, timeout=5)
 page_content = BeautifulSoup(page_response.content, "html.parser")
 tag = page_content.find_all('span', attrs={'class':'big-text font-arial'})
-my_ip = tag[0].get_text()
+my_ip = page_response.text
 
 logging.info("My IP: " + my_ip)
 
