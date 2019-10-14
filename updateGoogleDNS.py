@@ -69,10 +69,17 @@ try:
 except Exception:
     logging.warn('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
     
+replace_ip = False
 try:
     if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
-        file = open(PATH_INSTALL+"/my_ip.txt", "r")
-        print(file.read())
+        file = open(PATH_INSTALL+"/my_ip.txt", "r+")
+        ip_file = file.read()
+        if(ip_file != my_ip):
+            ip_file = ip_file.sub(ip_file, my_ip, ip_file)
+            file.seek(0)
+            file.write(ip_file)
+            file.close()
+            replace_ip = True
     else:
         file = open(PATH_INSTALL+"/my_ip.txt","w") 
         file.write(my_ip) 
@@ -82,50 +89,49 @@ except Exception:
     logging.warning('not found file my_ip.txt')
     exit()
 
- 
-
-credentials = service_account.Credentials.from_service_account_file(
-    PATH_OAUTH2_JSON)
-
-scoped_credentials = credentials.with_scopes(
-    ['https://www.googleapis.com/auth/ndev.clouddns.readwrite'])
-
-client_dns = dns.Client(
-    project=PROJECT_ID,
-    credentials=scoped_credentials)
-
-zones = client_dns.list_zones()
-
-for zone in zones:
-    if ZONE_NAME == zone.name:
-        records = zone.list_resource_record_sets()
-        for record in records:
-            if 'A' == record.record_type:
-                logging.info('name: ' + record.name)
-                logging.info('type: ' + record.record_type)
-                logging.info('ttl: ' + str(record.ttl))
-                logging.info('data: ' + str(record.rrdatas))
-                if record.rrdatas[0] == my_ip:
-                    logging.info('same ip')
-                else:
-                    logging.info('different ip')
-                    changes = zone.changes()
-                    changes.delete_record_set(record)
-                    changes.create()
-                    while changes.status != 'done':
-                        logging.info('Waiting for changes to complete')
-                        time.sleep(30)
-                        changes.reload()
-                    record_set = zone.resource_record_set('rafex.dev.', 'A', 300, [my_ip,])
-                    changes = zone.changes()
-                    changes.add_record_set(record_set)
-                    changes.create()  # API request
-                    while changes.status != 'done':
-                        logging.info('Waiting for changes to complete')
-                        time.sleep(30)
-                        changes.reload()
-
-            break
-    break
+if (replace_ip):
+    credentials = service_account.Credentials.from_service_account_file(
+        PATH_OAUTH2_JSON)
+    
+    scoped_credentials = credentials.with_scopes(
+        ['https://www.googleapis.com/auth/ndev.clouddns.readwrite'])
+    
+    client_dns = dns.Client(
+        project=PROJECT_ID,
+        credentials=scoped_credentials)
+    
+    zones = client_dns.list_zones()
+    
+    for zone in zones:
+        if ZONE_NAME == zone.name:
+            records = zone.list_resource_record_sets()
+            for record in records:
+                if 'A' == record.record_type:
+                    logging.info('name: ' + record.name)
+                    logging.info('type: ' + record.record_type)
+                    logging.info('ttl: ' + str(record.ttl))
+                    logging.info('data: ' + str(record.rrdatas))
+                    if record.rrdatas[0] == my_ip:
+                        logging.info('same ip')
+                    else:
+                        logging.info('different ip')
+                        changes = zone.changes()
+                        changes.delete_record_set(record)
+                        changes.create()
+                        while changes.status != 'done':
+                            logging.info('Waiting for changes to complete')
+                            time.sleep(30)
+                            changes.reload()
+                        record_set = zone.resource_record_set('rafex.dev.', 'A', 300, [my_ip,])
+                        changes = zone.changes()
+                        changes.add_record_set(record_set)
+                        changes.create()  # API request
+                        while changes.status != 'done':
+                            logging.info('Waiting for changes to complete')
+                            time.sleep(30)
+                            changes.reload()
+    
+                break
+        break
 
 logging.info('Finished')
