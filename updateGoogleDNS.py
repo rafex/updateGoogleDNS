@@ -77,7 +77,7 @@ try:
         ip_file = file.read()
         logging.info('my_ip.txt: ' + ip_file.strip())
         if(ip_file.strip() != my_ip.strip()):
-            ip_file = re.sub(ip_file, my_ip, ip_file)
+            ip_file = re.sub(ip_file.strip(), my_ip.strip(), ip_file)
             file.seek(0)
             file.write(ip_file)
             file.close()
