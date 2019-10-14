@@ -85,6 +85,7 @@ try:
             replace_ip = False
             logging.info('not update ip')
     else:
+        logging.info('create file my_ip.txt')
         file = open(PATH_INSTALL+"/my_ip.txt","w") 
         file.write(my_ip) 
         file.close()  
