@@ -74,23 +74,29 @@ try:
     if(os.path.isfile(PATH_INSTALL+"/my_ip.txt") == True):
         file = open(PATH_INSTALL+"/my_ip.txt", "r+")
         ip_file = file.read()
-        if(ip_file != my_ip):
-            ip_file = ip_file.sub(ip_file, my_ip, ip_file)
-            file.seek(0)
-            file.write(ip_file)
-            file.close()
-            replace_ip = True
-            logging.info('update ip')
-        else:
-            logging.info('not update ip')
     else:
         file = open(PATH_INSTALL+"/my_ip.txt","w") 
         file.write(my_ip) 
         file.close()  
     
-except Exception as e:
-    logging.warning('Exception: ' + str(e))
+except Exception as ex:
+    logging.warning(ex)
     logging.warning('not found file my_ip.txt')
+    exit()
+    
+try:
+    if(ip_file != my_ip):
+        ip_file = ip_file.sub(ip_file, my_ip, ip_file)
+        file.seek(0)
+        file.write(ip_file)
+        file.close()
+        replace_ip = True
+        logging.info('update ip')
+    else:
+        logging.info('not update ip')
+except Exception as ex:
+    logging.warning(ex)
+    logging.warning('fail overwrite my_ip.txt')
     exit()
 
 if (replace_ip):
