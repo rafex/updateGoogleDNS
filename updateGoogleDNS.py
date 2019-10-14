@@ -23,6 +23,7 @@ import time
 import os
 import logging
 import requests
+import re
 
 from google.oauth2 import service_account
 from google.cloud import dns
@@ -86,7 +87,7 @@ except Exception as ex:
     
 try:
     if(ip_file != my_ip):
-        ip_file = ip_file.sub(ip_file, my_ip, ip_file)
+        ip_file = re.sub(ip_file, my_ip, ip_file)
         file.seek(0)
         file.write(ip_file)
         file.close()
