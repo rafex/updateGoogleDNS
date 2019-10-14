@@ -26,7 +26,6 @@ import requests
 
 from google.oauth2 import service_account
 from google.cloud import dns
-from bs4 import BeautifulSoup
 from sys import exit
 
 try:
@@ -61,11 +60,18 @@ except KeyError:
 
 page_link ='https://domains.google.com/checkip'
 page_response = requests.get(page_link, timeout=5)
-page_content = BeautifulSoup(page_response.content, "html.parser")
-tag = page_content.find_all('span', attrs={'class':'big-text font-arial'})
 my_ip = page_response.text
 
 logging.info("My IP: " + my_ip)
+
+try:
+    PATH_INSTALL=os.environ["PATH_INSTALL_SCRIPT_PYTHON"]
+except Exception:
+    logging.info('not found enviroment PATH_INSTALL_SCRIPT_PYTHON')
+
+file = open(PATH_INSTALL+"/my_ip.txt","w") 
+file.write(my_ip) 
+file.close() 
 
 credentials = service_account.Credentials.from_service_account_file(
     PATH_OAUTH2_JSON)
