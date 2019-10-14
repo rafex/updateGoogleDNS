@@ -89,7 +89,7 @@ try:
         file.close()  
     
 except Exception as e:
-    logging.warning('Exception: ' + e)
+    logging.warning('Exception: ' + str(e))
     logging.warning('not found file my_ip.txt')
     exit()
 
